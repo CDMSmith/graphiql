@@ -797,9 +797,10 @@ export class GraphiQL extends React.Component {
               arrayPathString: splitter
             }, function (err, csv) {
               // if (err) return console.log(err);
-              console.log(csv);
-              obj.handlePrimArr(csv, splitter).then(output => {
-                obj.download('output.csv', output);  
+              obj.handleAggrArr(csv, splitter).then(csv2 => {
+                obj.handlePrimArr(csv2, splitter).then(output => {
+                  obj.download('output.csv', output);  
+                });
               });
             });
 
@@ -885,6 +886,27 @@ export class GraphiQL extends React.Component {
     return stagingArr;
   }
 
+  async handleAggrArr(csv, splitter) {
+    let arr = csv.split('\n');
+    let headers = arr[0].slice();
+  
+    const aggColumns = headers.split(',').reduce((acc, val, ind) => {
+      if (val.includes('aggregate')) acc.push(ind);
+      return acc;
+    }, []);
+  
+    let parsedData = arr.splice(1).map(row => {
+      let splitRow = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);  // Split on commas except in quotations
+      aggColumns.forEach(col => {
+        splitRow[col] = splitRow[col].replace(splitter, ' - ');
+      });
+      return splitRow.join(',');
+    });
+  
+    csv = [headers, ...parsedData].join('\n');
+    return csv;
+  }
+
   async handlePrimArr(csv, splitter, obj) {
     let res = csv.split('\n').map(e => e.split(',').map(e => e.trim())); 
     let stagingArr = [];
@@ -927,8 +949,10 @@ export class GraphiQL extends React.Component {
         arrayPathString: splitter
       }, function (err, csv) {
         // if (err) return console.log(err);
-        obj.handlePrimArr(csv, splitter, obj).then(output => {
-          obj.download('output.csv', output);  
+        obj.handleAggrArr(csv, splitter).then(csv2 => {
+          obj.handlePrimArr(csv2, splitter, obj).then(output => {
+            obj.download('output.csv', output);  
+          });
         });
       });
     }
