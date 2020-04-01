@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import { buildClientSchema, GraphQLSchema, parse, print } from 'graphql';
 import copyToClipboard from 'copy-to-clipboard';
-import jsonexport from 'jsonexport/dist';
+import converter from 'json-2-csv';
 
 import { ExecuteButton } from './ExecuteButton';
 import { ImagePreview } from './ImagePreview';
@@ -792,16 +792,16 @@ export class GraphiQL extends React.Component {
 
             // Alt code 10 (alt + 10) used to split primitive array values, match in functions parsePrimitiveArr() and findPrimCol()
             let splitter = '◙';
-            jsonexport(JSON.parse(JSON.stringify(res)), {
-              fillGaps: false,
-              arrayPathString: splitter
-            }, function (err, csv) {
+            converter.json2csv(JSON.parse(JSON.stringify(res)), function (err, csv) {
               // if (err) return console.log(err);
               obj.handleAggrArr(csv, splitter).then(csv2 => {
                 obj.handlePrimArr(csv2, splitter).then(output => {
                   obj.download('output.csv', output);  
                 });
               });
+            },
+            {
+              expandArrayObjects: true
             });
 
             this.setState({
@@ -944,19 +944,23 @@ export class GraphiQL extends React.Component {
 
       // Alt code 10 (alt + 10) used to split primitive array values, match in functions parsePrimitiveArr() and findPrimCol()
       let splitter = '◙';
-      jsonexport(res, {
-        fillGaps: false,
-        arrayPathString: splitter
-      }, function (err, csv) {
+      converter.json2csv(JSON.parse(JSON.stringify(res)), function (err, csv) {
         // if (err) return console.log(err);
         obj.handleAggrArr(csv, splitter).then(csv2 => {
-          obj.handlePrimArr(csv2, splitter, obj).then(output => {
+          obj.handlePrimArr(csv2, splitter).then(output => {
             obj.download('output.csv', output);  
           });
         });
+      },
+      {
+        expandArrayObjects: true
       });
     }
   };
+
+  csvify = (json, arrayPathString, callback) => {
+    var lines = json.map(j => )
+  }
 
   handlePrettifyQuery = () => {
     const editor = this.getQueryEditor();
