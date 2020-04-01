@@ -1,6 +1,6 @@
 {
   "name": "@cdmsmith/graphiql",
-  "version": "0.15.9",
+  "version": "0.15.15",
   "description": "An graphical interactive in-browser GraphQL IDE.",
   "contributors": [
     "Hyohyeon Jeong <asiandrummer@fb.com>",
