@@ -793,7 +793,7 @@ export class GraphiQL extends React.Component {
             // Alt code 10 (alt + 10) used to split primitive array values, match in functions parsePrimitiveArr() and findPrimCol()
             let splitter = '◙';
             jsonexport(JSON.parse(JSON.stringify(res)), {
-              fillGaps: true,
+              fillGaps: false,
               arrayPathString: splitter
             }, function (err, csv) {
               // if (err) return console.log(err);
@@ -945,7 +945,7 @@ export class GraphiQL extends React.Component {
       // Alt code 10 (alt + 10) used to split primitive array values, match in functions parsePrimitiveArr() and findPrimCol()
       let splitter = '◙';
       jsonexport(res, {
-        fillGaps: true,
+        fillGaps: false,
         arrayPathString: splitter
       }, function (err, csv) {
         // if (err) return console.log(err);
